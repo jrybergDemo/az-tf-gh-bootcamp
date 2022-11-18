@@ -1,0 +1,38 @@
+name: test-azure-bootcamp
+
+# Required for OIDC
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  ARM_CLIENT_ID:       ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_ENVIRONMENT:     public
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID:       ${{ secrets.AZURE_PUB_TENANT_ID }}
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  terraform:
+    runs-on:     ubuntu-latest
+    environment: Azure-Public-Test
+    steps:
+
+    - uses: actions/checkout@v2
+    - uses: hashicorp/setup-terraform@v2
+
+    - name:  Terraform Init
+      shell: pwsh
+      run:   terraform -chdir=terraform init -input=false -backend-config="${{ github.workspace }}/.tfbackend/${{ github.workflow }}"
+
+    - name:  Terraform Plan
+      shell: pwsh
+      run:   terraform -chdir=terraform plan -input=false -var-file="data/${{ github.workflow }}.tfvars" -out=tfplan
+
+    - name:  Terraform Apply
+      shell: pwsh
+      run:   terraform -chdir=terraform apply -auto-approve tfplan

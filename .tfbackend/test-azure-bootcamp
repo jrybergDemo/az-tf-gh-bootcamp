@@ -1,0 +1,4 @@
+key                  = "test-azure-bootcamp.tfstate"
+resource_group_name  = "tfstate"
+storage_account_name = "jrybergdemo"
+container_name       = "tfstate"
