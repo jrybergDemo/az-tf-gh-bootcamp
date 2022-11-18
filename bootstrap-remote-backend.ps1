@@ -1,17 +1,15 @@
 # Authenticate to Azure Subscription
 # Connect-AzAccount -Environment AzureCloud -Subscription <subscription_guid>
-param(
-    $location                 = 'westus2',
-    $tfbackend_rg_name        = 'tfstate',
-    $tfbackend_sa_name        = 'jrybergdemo',
-    $tfbackend_container_name = 'tfstate',
-    $tf_sp_name               = 'dev-az-tf-gh-sp',
-    $ghUsername               = 'devopsjesus',
-    $ghPAT                    = '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', # Pass in your GitHub Personal Access Token with repo & org access premissions
-    $ghOrgName                = 'jrybergDemo',
-    $ghRepoName               = 'az-tf-gh-bootcamp',
-    $ghRepoEnvironmentName    = 'Azure-Public-Dev'
-)
+$location                 = 'westus2'
+$tfbackend_rg_name        = 'tfstate'
+$tfbackend_sa_name        = 'jrybergdemo'
+$tfbackend_container_name = 'tfstate'
+$tf_sp_name               = 'dev-az-tf-gh-sp'
+$ghUsername               = 'devopsjesus'
+$ghPAT                    = '' # Pass in your GitHub Personal Access Token with repo & org access premissions
+$ghOrgName                = 'jrybergDemo'
+$ghRepoName               = 'az-tf-gh-bootcamp'
+$ghRepoEnvironmentName    = 'Azure-Public-Dev'
 
 $subscriptionId = (Get-AzContext).Subscription.Id
 $tenantId = (Get-AzContext).Tenant.Id
@@ -30,8 +28,8 @@ if (-Not (Get-AzADAppFederatedCredential -ApplicationObjectId $app.Id))
         ApplicationObjectId = $app.Id
         Audience            = 'api://AzureADTokenExchange'
         Issuer              = 'https://token.actions.githubusercontent.com'
-        Name                = $tf_sp_name
-        Subject             = "repo:$ghOrgName/$ghRepoName:environment:$ghRepoEnvironmentName"
+        Name                = "$tf_sp_name-bootcamp"
+        Subject             = "repo:$ghOrgName/${ghRepoName}:environment:$ghRepoEnvironmentName"
     }
     $cred = New-AzADAppFederatedCredential @params
 }
