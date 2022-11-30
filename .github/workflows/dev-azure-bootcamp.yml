@@ -5,6 +5,7 @@ permissions:
   id-token: write
   contents: read
 
+# Specific Naming - Terraform
 env:
   ARM_CLIENT_ID:       ${{ secrets.AZURE_CLIENT_ID }}
   ARM_ENVIRONMENT:     public
